@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS device (
+    mac TEXT PRIMARY KEY,
+    name TEXT,
+    icon TEXT,
+    manufacturer TEXT,
+    ip TEXT
+);

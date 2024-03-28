@@ -1,0 +1,54 @@
+@import './base.css';
+
+#app {
+  margin: 0 auto;
+  font-weight: normal;
+  display: flex;
+  flex-direction: column;
+}
+
+a,
+.green {
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
+  padding: 3px;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
+
+.item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 20px;
+}
+.icon {
+  margin: 20px;
+}
+
+header {
+  background: #234781;
+  height: 50px;
+}
+
+main {
+  height: 93vh;
+  overflow-y: scroll;
+}
+
+
+@media (min-width: 1024px) {
+  main {
+    display: flex;
+    flex-flow: wrap;
+  }
+}
+
+.offline-gray {
+  filter: grayscale(1);
+}
