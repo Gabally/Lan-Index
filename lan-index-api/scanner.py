@@ -1,33 +1,34 @@
-from scapy.all import ARP, Ether, srp
+import subprocess
+import re
 
 def scanForHosts(networkRange):
-    # ex. "192.168.1.1/24"
-    # IP Address for the destination
-    # create ARP packet
-    arp = ARP(pdst=networkRange)
-    # create the Ether broadcast packet
-    # ff:ff:ff:ff:ff:ff MAC address indicates broadcasting
-    ether = Ether(dst="ff:ff:ff:ff:ff:ff")
-    # stack them
-    packet = ether/arp
+    try:
+        result = subprocess.run(
+            ['nmap', '-sn', networkRange],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"Error running nmap: {e}")
+        return []
 
-    result = srp(packet, timeout=3, verbose=0)[0]
+    onlineDevices = []
+    lines = result.stdout.splitlines()
 
-    # a list of clients, we will fill this in the upcoming loop
-    clients = []
+    ipPattern = re.compile(r'Nmap scan report for (\d+\.\d+\.\d+\.\d+)')
+    macPattern = re.compile(r'MAC Address: ([\da-fA-F:]+)')
 
-    for sent, received in result:
-        # for each response, append ip and mac address to `clients` list
-        clients.append({'ip': received.psrc, 'mac': received.hwsrc})
+    currentIp = None
 
-    # print clients
-    results = []
+    for line in lines:
+        ipMatch = ipPattern.search(line)
+        macMatch = macPattern.search(line)
 
-    for client in clients:
-        results.append({
-            'mac': client['mac'],
-            'ip': client['ip']
-        })
-    
-    return results
+        if ipMatch:
+            currentIp = ipMatch.group(1)
+        elif macMatch and currentIp:
+            onlineDevices.append({'ip': currentIp, 'mac': macMatch.group(1)})
+            currentIp = None
 
+    return onlineDevices
