@@ -24,4 +24,7 @@ COPY lan-index-api/schema.sqlite .
 
 RUN pip3 install -r requirements.txt
 
+RUN apk update
+RUN apk add nmap
+
 ENTRYPOINT ["python3", "app.py"]
